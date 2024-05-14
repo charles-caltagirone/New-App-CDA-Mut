@@ -1,5 +1,6 @@
 package com.example.newappcdamut
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -36,7 +37,14 @@ class NoteListActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View) {
         if(view.tag != null){
-            Log.i("No activity", "Pas d'activité")
+            showNoteDetail(view.tag as Int)
         }
+    }
+
+    fun showNoteDetail(noteIndex: Int){
+        val note = notes[noteIndex]
+        val intent = Intent(this, NoteDetailActivity::class.java)
+        intent.putExtra(NoteDetailActivity.EXTRA_NOTE, note)
+        intent.putExtra(NoteDetailActivity.EXTRA_NOTE_INDEX, noteIndex)
     }
 }
