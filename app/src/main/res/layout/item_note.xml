@@ -23,7 +23,7 @@
                 android:textColor="#494949"
                 tools:text="Note 1"/>
             <TextView
-                android:id="@+id/exerpt"
+                android:id="@+id/excerpt"
                 style="@style/TextFontNoteDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
