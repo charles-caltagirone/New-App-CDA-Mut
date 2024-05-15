@@ -41,6 +41,8 @@ class NoteDetailActivity : AppCompatActivity() {
             intent.getParcelableExtra<Note>(EXTRA_NOTE)!!
         }
 
+        noteIndex = intent.getIntExtra(EXTRA_NOTE_INDEX, -1)
+
         titleView = findViewById<TextView>(R.id.title)
         textView = findViewById<TextView>(R.id.text)
 
@@ -66,7 +68,7 @@ class NoteDetailActivity : AppCompatActivity() {
 
     fun saveNote(){
         note.title = titleView.text.toString()
-        note.text = titleView.text.toString()
+        note.text = textView.text.toString()
         intent = Intent()
         intent.putExtra(EXTRA_NOTE, note)
         intent.putExtra(EXTRA_NOTE_INDEX, noteIndex)
