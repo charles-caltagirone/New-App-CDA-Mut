@@ -2,8 +2,8 @@ package com.example.newappcdamut
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -23,6 +23,9 @@ class NoteListActivity : AppCompatActivity(), View.OnClickListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         notes = mutableListOf<Note>()
         notes.add(Note("Note 1", "Ma première note"))
         notes.add(Note("Note 2", "Ma deuxième note"))
