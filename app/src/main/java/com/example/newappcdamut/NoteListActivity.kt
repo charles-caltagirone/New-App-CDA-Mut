@@ -1,5 +1,6 @@
 package com.example.newappcdamut
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
@@ -43,51 +44,66 @@ class NoteListActivity : AppCompatActivity(), View.OnClickListener {
         recyclerView.adapter = adapter
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode != Activity.RESULT_OK || data == null){
+        if (resultCode != Activity.RESULT_OK || data == null) {
             return
         }
-        when(requestCode){
+        when (requestCode) {
             NoteDetailActivity.REQUEST_EDIT_NOTE -> processEditNoteResult(data)
         }
     }
 
-    private fun processEditNoteResult(data: Intent){
+    private fun processEditNoteResult(data: Intent) {
         val noteIndex = data.getIntExtra(NoteDetailActivity.EXTRA_NOTE_INDEX, -1)
+        when (data.action) {
+            NoteDetailActivity.ACTION_SAVE_NOTE -> {
+                val note = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    data.getParcelableExtra(NoteDetailActivity.EXTRA_NOTE, Note::class.java)!!
+                } else {
+                    data.getParcelableExtra<Note>(NoteDetailActivity.EXTRA_NOTE)!!
+                }
+                saveNote(note, noteIndex)
+            }
 
-        val note = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            data.getParcelableExtra(NoteDetailActivity.EXTRA_NOTE, Note::class.java)!!
-        } else {
-            data.getParcelableExtra<Note>(NoteDetailActivity.EXTRA_NOTE)!!
+            NoteDetailActivity.ACTION_DELETE_NOTE -> {
+                deleteNote(noteIndex)
+            }
         }
-        saveNote(note, noteIndex)
     }
 
-    fun saveNote(note: Note, noteIndex: Int){
-        if (noteIndex <0){
+    private fun deleteNote(noteIndex: Int) {
+        if (noteIndex < 0) return
+        notes.removeAt(noteIndex)
+        adapter.notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun saveNote(note: Note, noteIndex: Int) {
+        if (noteIndex < 0) {
             notes.add(0, note)
-        }else{
+        } else {
             notes[noteIndex] = note
         }
         adapter.notifyDataSetChanged()
     }
+
     override fun onClick(view: View) {
-        if(view.tag != null){
+        if (view.tag != null) {
             showNoteDetail(view.tag as Int)
-        }else {
-            when(view.id){
+        } else {
+            when (view.id) {
                 R.id.create_note_fab -> createNewNote()
             }
         }
     }
 
-    fun createNewNote(){
+    fun createNewNote() {
         showNoteDetail(-1)
     }
 
-    fun showNoteDetail(noteIndex: Int){
-        val note = if(noteIndex < 0) Note() else notes[noteIndex]
+    fun showNoteDetail(noteIndex: Int) {
+        val note = if (noteIndex < 0) Note() else notes[noteIndex]
         val intent = Intent(this, NoteDetailActivity::class.java)
         intent.putExtra(NoteDetailActivity.EXTRA_NOTE, note)
         intent.putExtra(NoteDetailActivity.EXTRA_NOTE_INDEX, noteIndex)
